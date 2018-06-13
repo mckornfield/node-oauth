@@ -1,0 +1,22 @@
+{
+  "name": "oauth",
+  "version": "1.0.0",
+  "description": "OAuth Node Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mckornfield/node-oauth.git"
+  },
+  "author": "mckornfield",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/mckornfield/node-oauth/issues"
+  },
+  "homepage": "https://github.com/mckornfield/node-oauth#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
