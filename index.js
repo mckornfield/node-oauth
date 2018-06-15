@@ -2,7 +2,7 @@ const express = require('express');
 const url = require('url');
 const myParser = require("body-parser");
 const app = express();
-const port = 3434;
+const port = process.env.PORT == null ? 3434 : process.env.PORT;
 
 const RESPONSE_TYPE = "response_type";
 const CLIENT_ID = "client_id";

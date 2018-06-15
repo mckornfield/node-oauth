@@ -1,6 +1,7 @@
 FROM node:10.4.1-alpine
 
 ENV SERVER_DIR=/opt/nodeserver
+ENV PORT=5050
 
 RUN mkdir -p $SERVER_DIR && echo $SERVER_DIR
 COPY index.js package*.json $SERVER_DIR/
