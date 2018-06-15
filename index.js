@@ -14,10 +14,11 @@ const STATE = "state";
 
 const CLIENT_SECRET_VAL = "secretid";
 
+const inMemoryRequestTokenRepository = new Map();
 const inMemoryAccessTokenRepository = new Map();
-const inMemoryResourceTokenRepository = new Map();
 
-app.use(myParser.json({ extended: true }))
+app.use(myParser.json({ extended: true }));
+app.use(myParser.urlencoded({ extended: true }));
 app.use((request, response, next) => {
   console.log(request.headers);
   next();
@@ -33,8 +34,8 @@ app.get('/auth', (request, response) => {
     var code = generateToken();
     console.log(code);
     // Store the code so that it can be compared later
-    inMemoryAccessTokenRepository.set(clientId, code);
-    console.log(inMemoryAccessTokenRepository);
+    inMemoryRequestTokenRepository.set(clientId, code);
+    console.log(inMemoryRequestTokenRepository);
     response.redirect(url.format({
       pathname: redirectUri,
       query: {
@@ -51,31 +52,34 @@ app.post('/token', (request, response) => {
   var authHeader = request.headers['authorization'];
   if (isRequestAuthorized(authHeader)) {
     console.log(request.body);
-    if (!request.body) {
-      response.status(400).send('{"error": "invalid_client", "error_description": "Request body is empty"}');
+    if (!request.query) {
+      response.status(400).send('{"error": "invalid_client", "error_description": "No query parameters set"}');
       return;
     }
     var accessCode = request.body.code;
-    var clientId = getClientIdFromHeader(authHeader);
+    // console.log(request);
+    console.log("The body string is " + JSON.stringify(request.body));
+    var clientId = request.body.client_id;
     console.log("Sent Token " + accessCode);
-    var storedAccessCode = inMemoryAccessTokenRepository.get(clientId);
+    var storedAccessCode = inMemoryRequestTokenRepository.get(clientId);
     console.log("Stored token " + storedAccessCode);
     if (accessCode && storedAccessCode && storedAccessCode == accessCode) {
       // Remove access token from repo
-      inMemoryAccessTokenRepository.delete(clientId);
+      inMemoryRequestTokenRepository.delete(clientId);
 
       // Add access token to repo
       var resourceToken = generateToken();
-      inMemoryResourceTokenRepository.set(resourceToken, "You got the resource for " + clientId);
-      console.log("Stored token " + storedAccessCode);
-      response.send(JSON.stringify(
+      inMemoryAccessTokenRepository.set(resourceToken, "You got the resource for " + clientId);
+      console.log("Stored token " + resourceToken);
+      response.json(
         {
           "access_token": resourceToken,
-          "token_type": 3600,
+          "token_type": "bearer",
+          "expires_in": 3600,
           "refresh_token": "TODO",
           "scope": "any"
         }
-      ))
+      )
     } else {
       response.status(400).send('{"error": "invalid_token", "error_description": "Access token invalid or not present"}');
     }
@@ -89,7 +93,7 @@ app.get('/resource', (request, response) => {
   var authHeader = request.headers['authorization'];
   var resourceToken = authHeader.substring("Bearer ".length);
   if (resourceToken) {
-    var responseBody = inMemoryResourceTokenRepository.get(resourceToken);
+    var responseBody = inMemoryAccessTokenRepository.get(resourceToken);
     if (responseBody) {
       response.send(responseBody)
     } else {
