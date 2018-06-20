@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build . -t node-oauth:latest
+docker build . -t mckornfield/node-oauth:$1

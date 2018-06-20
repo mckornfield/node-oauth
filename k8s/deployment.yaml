@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: node-oauth
-          image: mckornfield/node-oauth:1
+          image: mckornfield/node-oauth:2
           imagePullPolicy: Always
           ports:
           - name: oauth-port
