@@ -118,6 +118,9 @@ function generateToken() {
 }
 
 function isRequestAuthorized(authHeader) {
+  if(!authHeader) {
+    return false;
+  }
   var shortenedHeader = authHeader.startsWith("Basic ") ? authHeader.substring("Basic ".length) : "";
   var decodedHeader = Buffer.from(shortenedHeader, 'base64').toString('ascii');
   var headerParts = String(decodedHeader).split(":");
@@ -126,6 +129,9 @@ function isRequestAuthorized(authHeader) {
 }
 
 function getClientIdFromHeader(authHeader) {
+  if(!authHeader) {
+    return false;
+  }
   var shortenedHeader = authHeader.startsWith("Basic ") ? authHeader.substring("Basic ".length) : "";
   var decodedHeader = Buffer.from(shortenedHeader, 'base64').toString('ascii');
   var headerParts = String(decodedHeader).split(":");

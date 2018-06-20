@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: node-oauth-deployment
+  labels:
+    app: node-oauth
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: node-oauth
+    spec:
+      containers:
+        - name: node-oauth
+          image: mckornfield/node-oauth:1
+          imagePullPolicy: Always
+          ports:
+          - name: oauth-port
+            containerPort: 5050
